@@ -4,6 +4,8 @@ import http.server as SimpleHTTPServer
 import socketserver as SocketServer
 import logging
 import ssl
+import sys
+import asyncio
 
 PORT = 8000
 test = {}
@@ -31,11 +33,24 @@ class GetHandler(
 
         test['ID'] = post_data # Add the ID given to us by the beacon to the dict - this should be replaced with a persistent mechanism, something like rabbidmq
 
-Handler = GetHandler
-httpd = SocketServer.TCPServer(("127.0.0.1", PORT), Handler)
+async def wssServer():
+        async with websockets.connect('ws://localhost:8765') as websocket:
 
-#httpd.socket = ssl.wrap_socket (httpd.socket,
-#        keyfile="/etc/nginx/certs/server.key",
-#        certfile='/etc/nginx/certs/server.crt', server_side=True)
+        cmd = input("> ")
+        await websocket.send(cmd)
 
-httpd.serve_forever()
+        status = await websocket.recv()
+        print("< {}".format(status))
+        
+if sys.argv[1] == 1:
+        Handler = GetHandler
+        httpd = SocketServer.TCPServer(("127.0.0.1", PORT), Handler)
+
+        #httpd.socket = ssl.wrap_socket (httpd.socket,
+        #        keyfile="/etc/nginx/certs/server.key",
+        #        certfile='/etc/nginx/certs/server.crt', server_side=True)
+
+        httpd.serve_forever()
+
+if sys.argv[1] == 2:
+        asyncio.get_event_loop().run_until_complete(wssServer())
