@@ -33,24 +33,18 @@ class GetHandler(
 
         test['ID'] = post_data # Add the ID given to us by the beacon to the dict - this should be replaced with a persistent mechanism, something like rabbidmq
 
-async def wssServer():
-        async with websockets.connect('ws://localhost:8765') as websocket:
+async def wssServer(websocket, path):
+        async def wssServer(websocket, path):
+                name = await websocket.recv()
+                print("< {}".format(name))
 
-        cmd = input("> ")
-        await websocket.send(cmd)
-
-        status = await websocket.recv()
-        print("< {}".format(status))
         
-if sys.argv[1] == 1:
+if sys.argv[1] == 1: # Route based on header auth
         Handler = GetHandler
         httpd = SocketServer.TCPServer(("127.0.0.1", PORT), Handler)
-
-        #httpd.socket = ssl.wrap_socket (httpd.socket,
-        #        keyfile="/etc/nginx/certs/server.key",
-        #        certfile='/etc/nginx/certs/server.crt', server_side=True)
-
         httpd.serve_forever()
 
-if sys.argv[1] == 2:
-        asyncio.get_event_loop().run_until_complete(wssServer())
+if sys.argv[1] == 2: # Use mTLS auth
+        start_server = websockets.serve(wssServer, 'localhost', 8010)
+        asyncio.get_event_loop().run_until_complete(start_server)
+        asyncio.get_event_loop().run_forever()
