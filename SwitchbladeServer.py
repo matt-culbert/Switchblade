@@ -41,7 +41,7 @@ async def wssServer(websocket, path):
         
 if sys.argv[1] == 1: # Route based on header auth
         Handler = GetHandler
-        httpd = SocketServer.TCPServer(("127.0.0.1", PORT), Handler)
+        httpd = SocketServer.TCPServer(("localhost", PORT), Handler)
         httpd.serve_forever()
 
 if sys.argv[1] == 2: # Use mTLS auth
