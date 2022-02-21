@@ -36,7 +36,7 @@ class GetHandler(
 async def wssServer(websocket, path):
         async def wssServer(websocket, path):
                 name = await websocket.recv()
-                print("< {}".format(name))
+                print(f"< {name}")
 
         
 if sys.argv[1] == 1: # Route based on header auth
