@@ -1,3 +1,6 @@
+From Switchblade to Swiss Army Knife. This is a Python based Beacon/C2 combo that is designed for Linux systems. It can open a shell back to the C2 communicating either with headers or with websockets.
+
+# To Use #
 Set the Nginx sites-enabled default listen to 8081 and use either of the Nginx configs for what you're aiming to do
 
 When using mTLS:
@@ -18,3 +21,4 @@ ToDo
 
 - [ ] Add base64 encoding for back and forth beacon/c2 communication
 - [ ] Add setting for OTP communication
+- [ ] Combine our two python beacon scipts into one, make sure there is a dynamic switch between the two modes
