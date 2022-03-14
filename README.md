@@ -13,3 +13,8 @@ openssl req -newkey rsa:2048 -nodes -keyout server.key -subj "/C=CN/ST=GD/L=SZ/O
 
 openssl x509 -req -extfile <(printf "subjectAltName=DNS:example.com,DNS:www.example.com") -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt 
 ```
+
+ToDo
+
+- [ ] Add base64 encoding for back and forth beacon/c2 communication
+- [ ] Add setting for OTP communication
