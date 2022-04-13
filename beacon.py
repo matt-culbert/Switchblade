@@ -36,7 +36,6 @@ def dll_inject(dll_path, sacrificial_process='notepad.exe'):
     h_process = kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, int(pid))
     if not h_process:
         print(f"[*] Couldn't acquire a handle to PID: {pid}")
-        sys.exit(0)
 
     # Allocate some space for the DLL path
     arg_address = kernel32.VirtualAllocEx(h_process, 0, dll_len, VIRTUAL_MEM, PAGE_READWRITE)
@@ -52,7 +51,6 @@ def dll_inject(dll_path, sacrificial_process='notepad.exe'):
 
     if not kernel32.CreateRemoteThread(h_process, None, 0, h_loadlib, arg_address, 0, byref(thread_id)):
         print("[*] Failed to inject the DLL. Exiting.")
-        sys.exit(0)
     print("[*] Remote thread with ID 0x%08x created." % thread_id.value)
 
     if sacrificial_process == 'notepad.exe':
