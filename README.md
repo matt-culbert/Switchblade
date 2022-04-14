@@ -17,6 +17,8 @@ openssl req -newkey rsa:2048 -nodes -keyout server.key -subj "/C=CN/ST=GD/L=SZ/O
 openssl x509 -req -extfile <(printf "subjectAltName=DNS:example.com,DNS:www.example.com") -days 365 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt 
 ```
 
+To send commands, simply generate an index.html and run <code>python -m http.server</code> in the same directory.
+Inside your index.html, send commands in the format of <code>cmd;timeout 5;null</code> for example.
 ToDo
 
 - [ ] Add base64 encoding for back and forth beacon/c2 communication
