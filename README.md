@@ -19,7 +19,7 @@ openssl x509 -req -extfile <(printf "subjectAltName=DNS:example.com,DNS:www.exam
 
 To send commands, simply generate an index.html and run <code>python -m http.server</code> in the same directory.
 
-Inside your index.html, send commands in the format of <code>cmd;timeout 5;null</code> for example.
+Inside your index.html you only need plain text. No fancy coding required. Send commands by writing <code>cmd;timeout 5;null</code> for example.
 
 
 ToDo
