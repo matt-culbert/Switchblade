@@ -18,6 +18,9 @@ def get_pid(process_name):
 
 
 def proc_inject(shellcode, sacrificial_process='notepad.exe'):
+    '''
+    Section still work in progress, does not currently work
+    '''
     notepad = subprocess.Popen([sacrificial_process])  # Start a sacrificial process
     pid = get_pid(sacrificial_process)
     PAGE_EXECUTE_READWRITE = 0x00000040
