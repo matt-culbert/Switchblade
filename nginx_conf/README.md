@@ -1,0 +1,1 @@
+This directory contains the config files for different nginx profiles. The standard one to use would just be nginx.conf. If you want to route clients with basic auth, I suggest using the header switching one. The more advanced option would be the mTLS zta config.
