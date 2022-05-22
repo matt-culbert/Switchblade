@@ -70,7 +70,6 @@ while 1:
     op = cmd.split(';')[0]
     cm = cmd.split(';')[1]
     ex = cmd.split(';')[2]
-    enc = cmd.split(';')[3]
 
     if op == 'cmd':
         returned = bleh(cm)
