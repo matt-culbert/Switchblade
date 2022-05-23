@@ -13,9 +13,11 @@ def home():
     f.close()
     return('found')
 
-@app.route("/returned")
+@app.route("/returned",methods = ['POST'])
 def results():
-    print(f'Result: {request.data}')
-    print(f'From beacon: {request.headers['APPSESSIONID']}')
+    if request.method == 'POST':
+        print(f'Result: {request.data}')
+        print(f'From beacon: {request.headers['APPSESSIONID']}')
+        
 if __name__=="__main__":
    app.run(debug=True)
