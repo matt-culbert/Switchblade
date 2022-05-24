@@ -26,8 +26,7 @@ def index(filename):
 def results():
     if request.method == 'POST':
         val = {request.headers['APPSESSIONID']}
-        print(f'Result: {request.data}')
-        print(f'From beacon: {val}')
+        print(f'Result: {request.data} from beacon: {val}')
         return 'HELO'
 
 if __name__=="__main__":
