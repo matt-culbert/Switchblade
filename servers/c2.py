@@ -15,9 +15,8 @@ def home():
 
 @app.route('/<path:filename>', methods=['GET', 'POST'])
 def index(filename):
-    filename = filename or 'index.html'
     if request.method == 'GET':
-        val = {request.headers['ID']}
+        val = {request.headers['APPSESSIONID']}
         print(f'Host {val} grabbed command')
         return send_from_directory('.', filename)
 
