@@ -1,5 +1,6 @@
-import subprocess
 from subprocess import PIPE
+from ctypes import CDLL, c_char_p, c_void_p, memmove, cast, CFUNCTYPE
+import subprocess
 import uuid
 import psutil
 import requests
