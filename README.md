@@ -1,4 +1,4 @@
-From Switchblade to Swiss Army Knife. This is a Python based Beacon/C2 combo that is designed for Linux systems. It can open a shell back to the C2 communicating either with headers or with websockets.
+From Switchblade to Swiss Army Knife. This is a Python based Beacon/C2 combo that is designed for Linux/Windows systems. It can open a shell back to the C2 communicating either with headers or with websockets.
 
 # To Use #
 Set the Nginx sites-enabled default listen to 8081 and use either of the Nginx configs for what you're aiming to do
