@@ -1,4 +1,5 @@
 from flask import *
+from string import ascii_letters, digits
 
 app = Flask(__name__)
 
@@ -6,12 +7,15 @@ app = Flask(__name__)
 def home():
     # Grab the appsessionid value from the headers
     val = request.headers['APPSESSIONID']
-    print(f'headers:{val}')
-    # create a new page for the UUID we got from the headers
-    f = open(f"/var/www/html/{val}.html", "a")
-    f.write("cmd;whoami;null ")
-    f.close()
-    return('found')
+    if set(val).difference(ascii_letters + digits):
+        pass
+    else:
+        print(f'headers:{val}')
+        # create a new page for the UUID we got from the headers
+        f = open(f"/var/www/html/{val}.html", "a")
+        f.write("cmd;whoami;null ")
+        f.close()
+        return('found')
 
 @app.route('/<path:filename>', methods=['GET', 'POST'])
 def index(filename):
