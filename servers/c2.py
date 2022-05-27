@@ -8,6 +8,8 @@ def home():
     # Grab the appsessionid value from the headers
     val = request.headers['APPSESSIONID']
     if set(val).difference(ascii_letters + digits):
+        # We're not going to bother with input sanatization here
+        # If we recieve special characters just drop it entirely
         pass
     else:
         print(f'headers:{val}')
