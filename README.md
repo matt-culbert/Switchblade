@@ -33,5 +33,5 @@ Compile the beacon.py into an executable using auto-py-to-exe and send it to the
 
 - [ ] Add base64 encoding for back and forth beacon/c2 communication
 - [ ] Create DLL for communication alternative
-- [x] Add shellcode injection
+- [ ] Add shellcode injection
 - [ ] Combine our two python beacon scipts into one, make sure there is a dynamic switch between the two modes
