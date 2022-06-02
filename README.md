@@ -36,3 +36,4 @@ Compile the beacon.py into an executable using auto-py-to-exe and send it to the
 - [ ] Add shellcode injection
 - [ ] Combine our two python beacon scipts into one, make sure there is a dynamic switch between the two modes
 - [ ] Add pub key crypto to encrypt commands being sent to beacons. This will obfuscate any data on the wire and prevent defenders from sending commands to infected end points that will cause the beacon to stop working.
+- [ ] Add gRPC support
