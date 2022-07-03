@@ -11,6 +11,15 @@ class RunFlask(pb2_grpc.UnaryServicer):
     def __init__(self, *args, **kwargs):
         pass
 
+    def GetServerResponse(self, request, context):
+
+        # get the string from the incoming request
+        message = request.message
+        result = f'Hello I am up and running received "{message}" message from you'
+        result = {'message': result, 'received': True}
+
+        return pb2.MessageResponse(**result)
+
     @app.route("/")
     def home(self):
         # Grab the appsessionid value from the headers
@@ -34,9 +43,7 @@ class RunFlask(pb2_grpc.UnaryServicer):
             val = {request.headers['APPSESSIONID']}
             print(f'Host {val} grabbed command')
             return send_from_directory('.', filename)
-            result = f'Host {val} grabbed command'
-            result = {'message': result, 'received': True}
-            return('', pb2.MessageResponse(**result))
+            
 
         return jsonify(request.data)
 
