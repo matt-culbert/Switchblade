@@ -6,3 +6,10 @@ There is the C2 and the controller files. The C2 uses Flask to handle beacon req
 # To Run #
 
 Put the C2 and controller in the same folder. Start the C2 and wait for a beacon to check in. Once a beacon checks in, you can use the controller to send new commands to it as well as get the status on executed commands
+
+
+# To Generate PB # 
+
+```
+python -m grpc_tools.protoc --proto_path=. ./protobuff.proto --python_out=. --grpc_python_out=.
+```
