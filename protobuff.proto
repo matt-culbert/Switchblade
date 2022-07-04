@@ -28,7 +28,9 @@ service Unary{
 }
 
 message Message{
- string message = 1;
+ string opt = 1;
+ string bID = 2;
+ string message = 3;
 }
 
 message MessageResponse{
